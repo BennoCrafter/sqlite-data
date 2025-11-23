@@ -747,17 +747,7 @@
       var newChanges: [CKSyncEngine.PendingRecordZoneChange] = []
 
       let oldZoneID = CKRecordZone.ID(zoneName: oldZoneName, ownerName: oldOwnerName)
-      let zoneID: CKRecordZone.ID
-      if privateTables.contains(where: { $0.base.tableName == recordType }) {
-        // Force private tables to always use current user's zone
-        zoneID = CKRecordZone.ID(
-          zoneName: defaultZone.zoneName,
-          ownerName: CKCurrentUserDefaultName
-        )
-      } else {
-        // Use parent's zone for shareable tables
-        zoneID = parentZoneID ?? defaultZone.zoneID
-      }
+      let zoneID = CKRecordZone.ID(zoneName: zoneName, ownerName: ownerName)
 
       if oldZoneID != zoneID {
         oldChanges.append(.deleteRecord(CKRecord.ID(recordName: recordName, zoneID: oldZoneID)))
