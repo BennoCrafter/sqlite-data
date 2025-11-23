@@ -502,7 +502,7 @@
         }
       }
     }
-    
+
     /// Fetches pending remote changes from the server.
     ///
     /// Use this method to ensure the sync engine immediately fetches all pending remote changes
@@ -523,7 +523,7 @@
       async let shared: Void = sharedSyncEngine.fetchChanges(options)
       _ = try await (`private`, shared)
     }
-    
+
     /// Sends pending local changes to the server.
     ///
     /// Use this method to ensure the sync engine sends all pending local changes to the server
@@ -544,7 +544,7 @@
       async let shared: Void = sharedSyncEngine.sendChanges(options)
       _ = try await (`private`, shared)
     }
-    
+
     /// Synchronizes local and remote pending changes.
     ///
     /// Use this method to ensure the sync engine immediately fetches all pending remote changes
@@ -1126,20 +1126,21 @@
               recordType: metadata.recordType,
               recordID: recordID
             )
-          if let parentRecordName = metadata.parentRecordName,
-            let parentRecordType = metadata.parentRecordType,
-            !privateTables.contains(where: { $0.base.tableName == parentRecordType })
-          {
-            record.parent = CKRecord.Reference(
-              recordID: CKRecord.ID(
-                recordName: parentRecordName,
-                zoneID: recordID.zoneID
-              ),
-              action: .none
-            )
-          } else {
-            record.parent = nil
-          }
+            if let parentRecordName = metadata.parentRecordName,
+              let parentRecordType = metadata.parentRecordType,
+              !privateTables.contains(where: { $0.base.tableName == parentRecordType }),
+              !privateTables.contains(where: { $0.base.tableName == metadata.recordType })  // Add this line
+            {
+              record.parent = CKRecord.Reference(
+                recordID: CKRecord.ID(
+                  recordName: parentRecordName,
+                  zoneID: recordID.zoneID
+                ),
+                action: .none
+              )
+            } else {
+              record.parent = nil
+            }
 
           record.update(
             with: T(queryOutput: row),
@@ -2163,7 +2164,7 @@
                 \(tableName.debugDescription).\(invalidForeignKey.from.debugDescription) \
                 references table \(invalidForeignKey.table.debugDescription) that is not \
                 synchronized. Update 'SyncEngine.init' to synchronize \
-                \(invalidForeignKey.table.debugDescription). 
+                \(invalidForeignKey.table.debugDescription).
                 """
             )
           }
