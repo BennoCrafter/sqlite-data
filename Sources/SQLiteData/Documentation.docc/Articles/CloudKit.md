@@ -106,8 +106,8 @@ you can use the `prepareDatabase` method on `Configuration` to attach the metada
 ```swift
 func appDatabase() -> any DatabaseWriter {
   var configuration = Configuration()
-  configuration.prepareDatabase = { db in
-    db.attachMetadatabase()
+  configuration.prepareDatabase { db in
+    try db.attachMetadatabase()
     …
   }
 }
@@ -519,7 +519,7 @@ struct RemindersListCoverImage {
 }
 /*
 CREATE TABLE "remindersListCoverImages" (
-  "remindersListID" TEXT PRIMARY KEY NOT NULL REFERENCES "remindersLists"("id"),
+  "remindersListID" TEXT PRIMARY KEY NOT NULL REFERENCES "remindersLists"("id") ON DELETE CASCADE,
   "image" BLOB NOT NULL
 )
 */
